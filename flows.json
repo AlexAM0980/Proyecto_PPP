@@ -1,1 +1,344 @@
-[]
+[
+    {
+        "id": "aed455f6b71a940c",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "tab-sensor",
+        "type": "tab",
+        "label": "Cliente Sensor",
+        "disabled": false,
+        "info": "Pestaña del cliente sensor: genera datos de humedad, temperatura y estado del sistema de riego"
+    },
+    {
+        "id": "84074941bb7be71a",
+        "type": "mqtt-broker",
+        "name": "hivemq",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "inject-humedad",
+        "type": "inject",
+        "z": "tab-sensor",
+        "name": "Disparo cada 1 min - Humedad",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "5528cc7f45197a1c"
+            ]
+        ]
+    },
+    {
+        "id": "set-humedad",
+        "type": "change",
+        "z": "tab-sensor",
+        "name": "Asigna valor aleatorio de humedad del suelo",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$round($random() * 100, 1)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "riego/sensores/humedad",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 950,
+        "y": 120,
+        "wires": [
+            [
+                "mqtt-out-sensor",
+                "debug-humedad"
+            ]
+        ]
+    },
+    {
+        "id": "debug-humedad",
+        "type": "debug",
+        "z": "tab-sensor",
+        "name": "Debug_Humedad",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "msg",
+        "x": 1270,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "inject-temperatura",
+        "type": "inject",
+        "z": "tab-sensor",
+        "name": "Disparo cada 2 min - Temperatura",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.2,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "set-temperatura"
+            ]
+        ]
+    },
+    {
+        "id": "set-temperatura",
+        "type": "change",
+        "z": "tab-sensor",
+        "name": "Valor_Aleatorio_Tem_Suelo",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$round(10 + $random() * 50, 1)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "riego/sensores/temperatura",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 220,
+        "wires": [
+            [
+                "mqtt-out-sensor",
+                "debug-temperatura"
+            ]
+        ]
+    },
+    {
+        "id": "debug-temperatura",
+        "type": "debug",
+        "z": "tab-sensor",
+        "name": "Debug_Tem_suelo",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "msg",
+        "x": 910,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "inject-estado",
+        "type": "inject",
+        "z": "tab-sensor",
+        "name": "Disparo cada 1 min - Estado del sistema",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.3,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "set-estado"
+            ]
+        ]
+    },
+    {
+        "id": "set-estado",
+        "type": "change",
+        "z": "tab-sensor",
+        "name": "Estado del sistema de riego",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{  \"sistema\": {    \"nombre\": \"Riego Inteligente\",    \"ubicacion\": \"Invernadero 1\",    \"estado\": {      \"riego\": \"apagado\",      \"alarmaTemperatura\": false,      \"alarmaHumedad\": false    }  }}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "riego/sistema/estado",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 340,
+        "wires": [
+            [
+                "mqtt-out-sensor",
+                "debug-estado"
+            ]
+        ]
+    },
+    {
+        "id": "debug-estado",
+        "type": "debug",
+        "z": "tab-sensor",
+        "name": "Debug_Estado",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1160,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "mqtt-out-sensor",
+        "type": "mqtt out",
+        "z": "tab-sensor",
+        "name": "",
+        "topic": "",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "84074941bb7be71a",
+        "x": 1310,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "176bd0f66e1707bd",
+        "type": "comment",
+        "z": "tab-sensor",
+        "name": "Comentario de como Funciona el apartado de Humedad.",
+        "info": "Genera valores aleatorios de humedad del suelo cada 1 minuto mediante un nodo random del 1 al 100.\nLos datos son enviados por MQTT al tópico riego/sensores/humedad y verificados mediante un nodo Debug.",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "01cb219fd464df4e",
+        "type": "comment",
+        "z": "tab-sensor",
+        "name": "Comentario de como Funciona el apartado de Temperatura.",
+        "info": "Genera valores aleatorios de temperatura del suelo cada 2 minutos. \nEstos valores son publicados por MQTT en el tópico riego/sensores/temperatura y monitoreados con un nodo Debug.",
+        "x": 260,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "0d59697cfb363ee1",
+        "type": "comment",
+        "z": "tab-sensor",
+        "name": "Comentario de como Funciona el apartado de Estado.",
+        "info": "Construye un mensaje JSON con la información general del sistema de riego (nombre, ubicación y estado). \nEl mensaje se envía por MQTT al tópico riego/sistema/estado.",
+        "x": 240,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "5528cc7f45197a1c",
+        "type": "random",
+        "z": "tab-sensor",
+        "name": "",
+        "low": 1,
+        "high": "100",
+        "inte": "false",
+        "property": "payload",
+        "x": 560,
+        "y": 120,
+        "wires": [
+            [
+                "set-humedad"
+            ]
+        ]
+    }
+]
